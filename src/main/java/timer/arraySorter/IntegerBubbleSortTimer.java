@@ -20,7 +20,7 @@ public class IntegerBubbleSortTimer extends BubbleSortTimer<Integer> {
     }
 
     public static void main(String[] args) {
-        BubbleSortTimer timer = new IntegerBubbleSortTimer();
-        timer.timingSequence();
+        BubbleSortTimer<Integer> timer = new IntegerBubbleSortTimer();
+        timer.timingSequence(false); // short (spreadsheet) output
     }
 }

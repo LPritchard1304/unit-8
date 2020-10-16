@@ -23,31 +23,31 @@ public interface Timer {
      * @return a timer.Timer object with a task of that size
      *
      */
-    public Timer getTimer(int size);
+    Timer getTimer(int size);
 
     /**
      * Nominate the timed method.  In an implementing class <tt>timedMethod</tt> will
      * be a wrapper method for the method to be timed.
      */
-    public void timedMethod();
+    void timedMethod();
 
     /**
      * A timer.Timer object shoud specify the maximum length of time that a time test should run
      * @return the maximum time that a single time test should run, in seconds
      */
-    public long getMaximumRuntime();
+    long getMaximumRuntime();
 
     /**
      * timer.Timer objects must also specify the minimum task size that they wish to see timed.
      * @return the maximum task size to be timed
      */
-    public int getMinimumTaskSize();
+    int getMinimumTaskSize();
 
     /**
      * timer.Timer objects must also specify the maximum task size that they wish to see timed.
      * @return the maximum task size to be timed
      */
-    public int getMaximumTaskSize();
+    int getMaximumTaskSize();
 
     /**
      * Run the timed method belonging to an implementing class, and time how
@@ -68,7 +68,7 @@ public interface Timer {
      *
      * @return the number of times each problem size should be timed
      */
-    public int getRunSetSize();
+    int getRunSetSize();
 
     /**
      * Run a sequence of time tests of increasing size. Task sizes of size 1,2,..,9,
@@ -76,8 +76,10 @@ public interface Timer {
      * tests terminates when the execution time of the timed method reaches or
      * surpasses the time limit, or the size of the generator reaches or
      * surpasses the maximum size.
+     *
+     * @param verbose do you want extensive human readable timing reports or compact (spreadsheet friendly) reorts?
      */
-    default void timingSequence() {
+    default void timingSequence(boolean verbose) {
         NumberFormat formatter = new DecimalFormat("#,###");
         int counter = getMinimumTaskSize();
         int power = 1;
@@ -86,6 +88,9 @@ public interface Timer {
             power = power * 10;
         }
         for (;; power = power * 10) {
+            if (!verbose) {
+                System.out.println(getTimer(0).getClass().getSimpleName() + ": " + formatter.format(power) + "-" + formatter.format(10*power) + "\tTime"); // add header for this range to trace
+            }
             for (; counter < 10; counter++) {
                 Duration time = Duration.ZERO;
                 for (int run = 0; run < getRunSetSize(); run++) {
@@ -93,8 +98,12 @@ public interface Timer {
                     time = time.plus(timer.time());
                 }
                 time = time.dividedBy(getRunSetSize());
-                String timeString = time.toString().substring(2).replaceFirst("S", " seconds");
-                System.out.println(getTimer(0).getClass() + " took " + timeString + " for a task of size " + formatter.format(counter * power));
+                if (verbose) {
+                    String timeString = time.toString().substring(2).replaceFirst("S", " seconds");
+                    System.out.println(getTimer(0).getClass().getSimpleName() + " took " + timeString + " for a task of size " + formatter.format(counter * power));
+                } else {
+                    System.out.println(formatter.format(counter*power) + "\t" + formatter.format(time.toNanos())); // times translated to milliseconds
+                }
                 if (counter * power >= getMaximumTaskSize()) {
                     System.out.println("Maximum task size, " + getMaximumTaskSize() + ", reached. Ending timing sequence.");
                     return;

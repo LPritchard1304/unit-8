@@ -20,7 +20,7 @@ public class CharacterBubbleSortTimer extends BubbleSortTimer<Character> {
     }
 
     public static void main(String[] args) {
-        BubbleSortTimer timer = new CharacterBubbleSortTimer();
-        timer.timingSequence();
+        BubbleSortTimer<Character> timer = new CharacterBubbleSortTimer();
+        timer.timingSequence(true); // long output
     }
 }

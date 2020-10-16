@@ -26,7 +26,7 @@ public abstract class BubbleSortTimer<T extends Comparable<? super T>> extends B
 
     @Override
     public long getMaximumRuntime() {
-        return 5;
+        return 1;
     }
 
     @Override
